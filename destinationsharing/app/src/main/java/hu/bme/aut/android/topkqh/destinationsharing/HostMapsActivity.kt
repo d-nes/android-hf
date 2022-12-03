@@ -61,7 +61,7 @@ class HostMapsActivity : AppCompatActivity(), OnMapReadyCallback {
             Log.i("GPS", currentLocation.toString())
             val newloc = LatLng(currentLocation.latitude, currentLocation.longitude)
 
-            val destination = LatLng(47.497913, 19.040236)
+            val destination = LatLng(47.4736419, 19.0605869)
             val route = listOf(newloc, destination)
 
             mMap.clear()
