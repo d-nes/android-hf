@@ -19,10 +19,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DestinationSharing"
         tools:targetApi="31">
+        <activity
+            android:name=".PostsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_posts"
+            android:theme="@style/Theme.DestinationSharing.NoActionBar">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
         <service
             android:name=".location.LocationService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

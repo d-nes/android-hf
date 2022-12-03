@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "376928364213",
+    "project_id": "destinationsharing",
+    "storage_bucket": "destinationsharing.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:376928364213:android:c9b8957651ba55959440fc",
+        "android_client_info": {
+          "package_name": "hu.bme.aut.android.topkqh.destinationsharing"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "376928364213-b4t6ala0o0eufjtlfrge0vkvmvb6616u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADpMdneC8v-En6w-EVAayh3tp4wuF6hHM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "376928364213-b4t6ala0o0eufjtlfrge0vkvmvb6616u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
