@@ -1,6 +1,7 @@
 package hu.bme.aut.android.topkqh.destinationsharing
 
 import android.content.Intent
+import android.opengl.Visibility
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem

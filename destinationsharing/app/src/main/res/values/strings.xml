@@ -11,4 +11,5 @@
     <string name="button_cancel">Cancel</string>
     <string name="destination">Destination:</string>
     <string name="title_activity_guest_maps">Viewing location activity</string>
+    <string name="no_data_available">No shares yet</string>
 </resources>
