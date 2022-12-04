@@ -88,7 +88,6 @@ class HostMapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun drawRoute(startLocation: LatLng){
         val path: MutableList<List<LatLng>> = ArrayList()
         val urlDirections = "https://maps.googleapis.com/maps/api/directions/json?origin=${startLocation.latitude},${startLocation.longitude}&destination=${destination.latitude},${destination.longitude}&key=AIzaSyBut5XGGiGMwGdNbGEAEe-8PhCB9IIUckE"
-        Log.d("url", urlDirections)
         val directionsRequest = object : StringRequest(Request.Method.GET, urlDirections, Response.Listener<String> {
                 response ->
             val jsonResponse = JSONObject(response)
