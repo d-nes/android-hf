@@ -1,23 +1,26 @@
 package hu.bme.aut.android.topkqh.destinationsharing
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
-import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.navigation.NavigationView
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.appcompat.app.AppCompatActivity
-import hu.bme.aut.android.topkqh.destinationsharing.auth.Firebase
+import android.view.MenuItem
+import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
+import hu.bme.aut.android.topkqh.destinationsharing.adapter.PostsAdapter
+import hu.bme.aut.android.topkqh.destinationsharing.data.Post
 import hu.bme.aut.android.topkqh.destinationsharing.databinding.ActivityPostsBinding
+import hu.bme.aut.android.topkqh.destinationsharing.auth.Firebase as Firebase1
 
-class PostsActivity : Firebase() {
+class PostsActivity : Firebase1() {
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityPostsBinding
+    private lateinit var postsAdapter: PostsAdapter
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,32 +30,58 @@ class PostsActivity : Firebase() {
 
         setSupportActionBar(binding.appBarPosts.toolbar)
 
-        binding.appBarPosts.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+        binding.appBarPosts.fab.setOnClickListener {
+            NewFragment().show(
+                supportFragmentManager,
+                NewFragment.TAG
+            )
         }
-        val drawerLayout: DrawerLayout = binding.drawerLayout
-        val navView: NavigationView = binding.navView
-        val navController = findNavController(R.id.nav_host_fragment_content_posts)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow
-            ), drawerLayout
-        )
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
+
+        postsAdapter = PostsAdapter(applicationContext)
+        binding.appBarPosts.contentPosts.rvPosts.layoutManager = LinearLayoutManager(this).apply {
+            reverseLayout = true
+            stackFromEnd = true
+        }
+        binding.appBarPosts.contentPosts.rvPosts.adapter = postsAdapter
+
+        initPostsListener()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.posts, menu)
         return true
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_posts)
-        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.getItemId()
+
+        if(id == R.id.action_logout) {
+            FirebaseAuth.getInstance().signOut()
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+        } else if(id == R.id.action_settings) {
+
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun initPostsListener() {
+        val db = Firebase.firestore
+        db.collection("posts")
+            .addSnapshotListener { snapshots, e ->
+                if (e != null) {
+                    Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show()
+                    return@addSnapshotListener
+                }
+
+                for (dc in snapshots!!.documentChanges) {
+                    when (dc.type) {
+                        DocumentChange.Type.ADDED -> postsAdapter.addPost(dc.document.toObject<Post>())
+                        DocumentChange.Type.MODIFIED -> Toast.makeText(this, dc.document.data.toString(), Toast.LENGTH_SHORT).show()
+                        DocumentChange.Type.REMOVED -> Toast.makeText(this, dc.document.data.toString(), Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
     }
 }

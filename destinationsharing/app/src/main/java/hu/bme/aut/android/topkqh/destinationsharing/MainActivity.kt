@@ -67,7 +67,7 @@ class MainActivity : Firebase() {
             .addOnSuccessListener {
                 hideProgressDialog()
 
-                startActivity(Intent(this@MainActivity, HostMapsActivity::class.java))
+                startActivity(Intent(this@MainActivity, PostsActivity::class.java))
                 finish()
             }
             .addOnFailureListener { exception ->
