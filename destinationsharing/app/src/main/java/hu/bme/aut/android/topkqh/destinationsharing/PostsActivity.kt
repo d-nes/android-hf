@@ -44,6 +44,8 @@ class PostsActivity : Firebase1() {
         }
         binding.appBarPosts.contentPosts.rvPosts.adapter = postsAdapter
 
+        title = "Logged in as: " + userName
+
         initPostsListener()
     }
 
@@ -78,11 +80,17 @@ class PostsActivity : Firebase1() {
                 for (dc in snapshots!!.documentChanges) {
                     when (dc.type) {
                         DocumentChange.Type.ADDED -> postsAdapter.addPost(dc.document.toObject(Post::class.java))
-                        DocumentChange.Type.MODIFIED -> {}//Toast.makeText(this, dc.document.data.toString(), Toast.LENGTH_SHORT).show()
+                        DocumentChange.Type.MODIFIED -> {}
                         //DocumentChange.Type.REMOVED -> Toast.makeText(this, dc.document.data.toString(), Toast.LENGTH_SHORT).show()
-                        DocumentChange.Type.REMOVED -> Toast.makeText(this, "A share has stopped", Toast.LENGTH_SHORT).show()
+                        //DocumentChange.Type.REMOVED -> Toast.makeText(this, "A share has stopped", Toast.LENGTH_SHORT).show()
+                        DocumentChange.Type.REMOVED -> postsAdapter.deletePost(dc.document.toObject(Post::class.java))
                     }
                 }
             }
+    }
+
+    override fun onResume() {
+        postsAdapter.notifyDataSetChanged()
+        super.onResume()
     }
 }

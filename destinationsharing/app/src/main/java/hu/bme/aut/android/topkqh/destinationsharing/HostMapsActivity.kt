@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Color
+import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
@@ -28,9 +29,17 @@ import hu.bme.aut.android.topkqh.destinationsharing.databinding.ActivityHostMaps
 import hu.bme.aut.android.topkqh.destinationsharing.extensions.bitmapDescriptorFromVector
 import hu.bme.aut.android.topkqh.destinationsharing.location.LocationService
 import hu.bme.aut.android.topkqh.destinationsharing.extensions.getRoute
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.RuntimePermissions
 import java.lang.Double
+import java.util.*
+import kotlin.concurrent.schedule
+import kotlin.concurrent.scheduleAtFixedRate
+import kotlin.concurrent.thread
 
 
 @RuntimePermissions
@@ -79,6 +88,9 @@ class HostMapsActivity : Firebase(), OnMapReadyCallback {
             //Forgive me lord for this
             if(!firstReceived){
                 uploadPost()
+                title = "To: " +
+                    Geocoder(context).getFromLocation(destination.latitude, destination.longitude, 1)
+                        .get(0).getAddressLine(0)
                 firstReceived = true
             }
 
@@ -101,6 +113,7 @@ class HostMapsActivity : Firebase(), OnMapReadyCallback {
 
     private lateinit var docRef: Task<DocumentReference>
     private lateinit var db: FirebaseFirestore
+    private lateinit var timer: TimerTask
 
     private fun uploadPost() {
         val newPost = Post(uid, userName, destination.toString(), currentLocation.toString())
@@ -110,12 +123,24 @@ class HostMapsActivity : Firebase(), OnMapReadyCallback {
                 .addOnSuccessListener {
                     toast("Route shared") }
                 .addOnFailureListener { e -> toast(e.toString()) }
+
+        timer = Timer().scheduleAtFixedRate(15000, 15000) {
+            updatePost()
+        }
     }
 
     private fun removePost() {
+        timer.cancel()
         db.collection("posts").document(docRef.result.id)
             .delete()
             .addOnSuccessListener { toast("Route finished") }
+            .addOnFailureListener { e -> toast(e.toString()) }
+    }
+
+    private fun updatePost() {
+        db.collection("posts").document(docRef.result.id)
+            .update("location", currentLocation.toString())
+            .addOnSuccessListener { Log.i("Firestore", "Updated post") }
             .addOnFailureListener { e -> toast(e.toString()) }
     }
 
