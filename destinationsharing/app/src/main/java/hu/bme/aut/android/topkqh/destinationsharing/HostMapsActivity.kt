@@ -28,6 +28,7 @@ import com.google.android.gms.maps.model.*
 import com.google.maps.android.PolyUtil
 import hu.bme.aut.android.topkqh.destinationsharing.databinding.ActivityHostMapsBinding
 import hu.bme.aut.android.topkqh.destinationsharing.location.LocationService
+import hu.bme.aut.android.topkqh.destinationsharing.navigation.drawRoute
 import org.json.JSONObject
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.RuntimePermissions
@@ -78,13 +79,16 @@ class HostMapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
             mMap.clear()
             //mMap.addPolyline(PolylineOptions().addAll(route).color(Color.RED).width(20F).endCap(RoundCap()).startCap(RoundCap()).zIndex(1F))
-            drawRoute(newloc)
+            drawRoute(newloc, destination)
             mMap.addMarker(MarkerOptions().position(destination).icon(bitmapDescriptorFromVector(context, R.drawable.ic_goal)).zIndex(10F))
             mMap.addMarker(MarkerOptions().position(newloc).icon(bitmapDescriptorFromVector(context, R.drawable.ic_person)).zIndex(10F))
             mMap.moveCamera(CameraUpdateFactory.newLatLng(newloc))
         }
     }
 
+
+
+    /*
     private fun drawRoute(startLocation: LatLng){
         val path: MutableList<List<LatLng>> = ArrayList()
         val urlDirections = "https://maps.googleapis.com/maps/api/directions/json?origin=${startLocation.latitude},${startLocation.longitude}&destination=${destination.latitude},${destination.longitude}&key=AIzaSyBut5XGGiGMwGdNbGEAEe-8PhCB9IIUckE"
@@ -107,6 +111,7 @@ class HostMapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val requestQueue = Volley.newRequestQueue(this)
         requestQueue.add(directionsRequest)
     }
+         */
 
     private fun bitmapDescriptorFromVector(context: Context, vectorResId: Int): BitmapDescriptor? {
         val vectorDrawable = ContextCompat.getDrawable(context, vectorResId)
