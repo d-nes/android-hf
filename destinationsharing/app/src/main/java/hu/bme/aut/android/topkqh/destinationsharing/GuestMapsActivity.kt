@@ -36,6 +36,10 @@ class GuestMapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var currentLocation: LatLng
     private lateinit var timer: TimerTask
 
+    companion object{
+        var guest_period: Long = 15000
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -57,7 +61,7 @@ class GuestMapsActivity : AppCompatActivity(), OnMapReadyCallback {
                         path = document.id
                 }
                 getLocations()
-                timer = Timer().scheduleAtFixedRate(1000, 15000) {
+                timer = Timer().scheduleAtFixedRate(1000, guest_period) {
                     updateLocation()
                     runOnUiThread() {
                         onUpdate()

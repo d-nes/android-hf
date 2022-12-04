@@ -12,4 +12,8 @@
     <string name="destination">Destination:</string>
     <string name="title_activity_guest_maps">Viewing location activity</string>
     <string name="no_data_available">No shares yet</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <string name="updates_header">Updates</string>
+    <string name="frequency_title">Update frequency</string>
 </resources>

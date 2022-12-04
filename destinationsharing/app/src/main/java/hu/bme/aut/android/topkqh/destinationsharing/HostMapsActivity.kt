@@ -12,7 +12,6 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
-import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -29,17 +28,11 @@ import hu.bme.aut.android.topkqh.destinationsharing.databinding.ActivityHostMaps
 import hu.bme.aut.android.topkqh.destinationsharing.extensions.bitmapDescriptorFromVector
 import hu.bme.aut.android.topkqh.destinationsharing.location.LocationService
 import hu.bme.aut.android.topkqh.destinationsharing.extensions.getRoute
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import permissions.dispatcher.NeedsPermission
 import permissions.dispatcher.RuntimePermissions
 import java.lang.Double
 import java.util.*
-import kotlin.concurrent.schedule
 import kotlin.concurrent.scheduleAtFixedRate
-import kotlin.concurrent.thread
 
 
 @RuntimePermissions
@@ -48,7 +41,11 @@ class HostMapsActivity : Firebase(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityHostMapsBinding
     private lateinit var destination: LatLng
-    private lateinit var currentLocation: LatLng// = LatLng(0.0, 0.0)
+    private lateinit var currentLocation: LatLng
+
+    companion object{
+        var host_period: Long = 15000
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -124,7 +121,7 @@ class HostMapsActivity : Firebase(), OnMapReadyCallback {
                     toast("Route shared") }
                 .addOnFailureListener { e -> toast(e.toString()) }
 
-        timer = Timer().scheduleAtFixedRate(15000, 15000) {
+        timer = Timer().scheduleAtFixedRate(host_period, host_period) {
             updatePost()
         }
     }
@@ -164,10 +161,10 @@ class HostMapsActivity : Firebase(), OnMapReadyCallback {
     }
 
     override fun onStop() {
+        locationService(false)
+
         LocalBroadcastManager.getInstance(this)
             .unregisterReceiver(locationReceiver)
-
-        locationService(false)
 
         removePost()
 
