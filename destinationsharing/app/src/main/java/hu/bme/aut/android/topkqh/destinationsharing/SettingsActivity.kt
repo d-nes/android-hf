@@ -28,8 +28,8 @@ class SettingsActivity : AppCompatActivity(), SharedPreferences.OnSharedPreferen
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when(key){
             PERIOD_TIME -> {
-                HostMapsActivity.host_period = sharedPreferences!!.getLong(PERIOD_TIME, 15000)
-                GuestMapsActivity.guest_period = sharedPreferences!!.getLong(PERIOD_TIME, 15000)
+                //HostMapsActivity.host_period = sharedPreferences!!.getLong(PERIOD_TIME, 15000)
+                //GuestMapsActivity.guest_period = sharedPreferences!!.getLong(PERIOD_TIME, 15000)
             }
         }
     }

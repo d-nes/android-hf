@@ -40,10 +40,10 @@ class PostsAdapter(private val context: Context) :
                 parseDouble(dst?.get(0)),parseDouble(dst?.get(1)), 1).get(0).getAddressLine(0)
         }
         holder.itemView.setOnClickListener {
-            val intent = Intent(context, GuestMapsActivity::class.java)
-            intent.putExtra("path", tmpPost.uid)
-            intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
-            startActivity(context, intent, null)
+           val intent = Intent(context, GuestMapsActivity::class.java)
+           intent.putExtra("path", tmpPost.uid)
+           intent.addFlags(FLAG_ACTIVITY_NEW_TASK)
+           startActivity(context, intent, null)
         }
     }
 

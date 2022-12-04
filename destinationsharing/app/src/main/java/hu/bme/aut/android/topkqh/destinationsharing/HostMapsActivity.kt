@@ -43,9 +43,7 @@ class HostMapsActivity : Firebase(), OnMapReadyCallback {
     private lateinit var destination: LatLng
     private lateinit var currentLocation: LatLng
 
-    companion object{
-        var host_period: Long = 15000
-    }
+    private val period: Long = 15000//PreferenceManager.getDefaultSharedPreferences(this).getLong(SettingsActivity.PERIOD_TIME, 15000)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -121,7 +119,7 @@ class HostMapsActivity : Firebase(), OnMapReadyCallback {
                     toast("Route shared") }
                 .addOnFailureListener { e -> toast(e.toString()) }
 
-        timer = Timer().scheduleAtFixedRate(host_period, host_period) {
+        timer = Timer().scheduleAtFixedRate(period, period) {
             updatePost()
         }
     }

@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
+import androidx.preference.PreferenceManager
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -36,9 +37,7 @@ class GuestMapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var currentLocation: LatLng
     private lateinit var timer: TimerTask
 
-    companion object{
-        var guest_period: Long = 15000
-    }
+    val period: Long = 15000//PreferenceManager.getDefaultSharedPreferences(this).getLong(SettingsActivity.PERIOD_TIME, 15000)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +60,7 @@ class GuestMapsActivity : AppCompatActivity(), OnMapReadyCallback {
                         path = document.id
                 }
                 getLocations()
-                timer = Timer().scheduleAtFixedRate(1000, guest_period) {
+                timer = Timer().scheduleAtFixedRate(1000, period) {
                     updateLocation()
                     runOnUiThread() {
                         onUpdate()
@@ -99,6 +98,7 @@ class GuestMapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun getLocations() {
+        try {
         db.collection("posts").document(path).get().addOnSuccessListener {
             user = it.get("user").toString()
 
@@ -123,6 +123,9 @@ class GuestMapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 timer.cancel()
                 finish()
             }
+        } catch (e: UninitializedPropertyAccessException){
+            finish()
+        }
     }
 
     private fun updateLocation() {
