@@ -1,6 +1,7 @@
 package hu.bme.aut.android.topkqh.destinationsharing.adapter
 
 import android.content.Context
+import android.location.Geocoder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,6 +30,12 @@ class PostsAdapter(private val context: Context) :
         val tmpPost = postList[position]
         holder.tvUser.text = tmpPost.user
         holder.tvDestination.text = tmpPost.destination
+        /*
+        holder.tvDestination.text = tmpPost.destination?.let {
+            Geocoder(this.context).getFromLocation(
+                it.latitude,tmpPost.destination.longitude, 1).toString()
+        }
+         */
     }
 
     fun addPost(post: Post?) {
