@@ -18,6 +18,9 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import hu.bme.aut.android.topkqh.destinationsharing.auth.Firebase
 import hu.bme.aut.android.topkqh.destinationsharing.data.Post
@@ -36,7 +39,7 @@ class HostMapsActivity : Firebase(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityHostMapsBinding
     private lateinit var destination: LatLng
-    private  var currentLocation = LatLng(0.0, 0.0)
+    private lateinit var currentLocation: LatLng// = LatLng(0.0, 0.0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,12 +67,20 @@ class HostMapsActivity : Firebase(), OnMapReadyCallback {
         mMap = googleMap
     }
 
+    var firstReceived = false
+
     private val locationReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val newLoc =
                 intent.getParcelableExtra<Location>(LocationService.KEY_LOCATION)!!
             Log.i("GPS", newLoc.toString())
             currentLocation = LatLng(newLoc.latitude, newLoc.longitude)
+
+            //Forgive me lord for this
+            if(!firstReceived){
+                uploadPost()
+                firstReceived = true
+            }
 
             val route = getRoute(currentLocation, destination)
 
@@ -86,16 +97,25 @@ class HostMapsActivity : Firebase(), OnMapReadyCallback {
         super.onStart()
         registerReceiverWithPermissionCheck()
         locationService(true)
-        uploadPost()
     }
+
+    private lateinit var docRef: Task<DocumentReference>
+    private lateinit var db: FirebaseFirestore
 
     private fun uploadPost() {
         val newPost = Post(uid, userName, destination.toString(), currentLocation.toString())
-        val db = com.google.firebase.ktx.Firebase.firestore
-        db.collection("posts")
-            .add(newPost)
-            .addOnSuccessListener {
-                toast("Route shared") }
+        db = com.google.firebase.ktx.Firebase.firestore
+        docRef = db.collection("posts")
+                .add(newPost)
+                .addOnSuccessListener {
+                    toast("Route shared") }
+                .addOnFailureListener { e -> toast(e.toString()) }
+    }
+
+    private fun removePost() {
+        db.collection("posts").document(docRef.result.id)
+            .delete()
+            .addOnSuccessListener { toast("Route finished") }
             .addOnFailureListener { e -> toast(e.toString()) }
     }
 
@@ -123,6 +143,8 @@ class HostMapsActivity : Firebase(), OnMapReadyCallback {
             .unregisterReceiver(locationReceiver)
 
         locationService(false)
+
+        removePost()
 
         super.onStop()
     }

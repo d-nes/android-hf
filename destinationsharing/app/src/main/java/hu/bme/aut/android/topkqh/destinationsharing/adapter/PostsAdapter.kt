@@ -2,8 +2,8 @@ package hu.bme.aut.android.topkqh.destinationsharing.adapter
 
 import android.content.Context
 import android.location.Geocoder
+import android.location.Location
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import hu.bme.aut.android.topkqh.destinationsharing.data.Post
 import hu.bme.aut.android.topkqh.destinationsharing.databinding.CardPostBinding
+import java.lang.Double.parseDouble
 
 class PostsAdapter(private val context: Context) :
     ListAdapter<Post, PostsAdapter.PostViewHolder>(itemCallback) {
@@ -28,14 +29,12 @@ class PostsAdapter(private val context: Context) :
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val tmpPost = postList[position]
-        holder.tvUser.text = tmpPost.user
-        holder.tvDestination.text = tmpPost.destination
-        /*
+        holder.tvUser.text = tmpPost.user + " is on their way to:"
+        val dst = tmpPost.destination?.subSequence(10, tmpPost.destination.lastIndex)?.split(",")
         holder.tvDestination.text = tmpPost.destination?.let {
             Geocoder(this.context).getFromLocation(
-                it.latitude,tmpPost.destination.longitude, 1).toString()
+                parseDouble(dst?.get(0)),parseDouble(dst?.get(1)), 1).get(0).getAddressLine(0)
         }
-         */
     }
 
     fun addPost(post: Post?) {

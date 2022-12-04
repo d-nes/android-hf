@@ -78,8 +78,9 @@ class PostsActivity : Firebase1() {
                 for (dc in snapshots!!.documentChanges) {
                     when (dc.type) {
                         DocumentChange.Type.ADDED -> postsAdapter.addPost(dc.document.toObject(Post::class.java))
-                        DocumentChange.Type.MODIFIED -> Toast.makeText(this, dc.document.data.toString(), Toast.LENGTH_SHORT).show()
-                        DocumentChange.Type.REMOVED -> Toast.makeText(this, dc.document.data.toString(), Toast.LENGTH_SHORT).show()
+                        DocumentChange.Type.MODIFIED -> {}//Toast.makeText(this, dc.document.data.toString(), Toast.LENGTH_SHORT).show()
+                        //DocumentChange.Type.REMOVED -> Toast.makeText(this, dc.document.data.toString(), Toast.LENGTH_SHORT).show()
+                        DocumentChange.Type.REMOVED -> Toast.makeText(this, "A share has stopped", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
